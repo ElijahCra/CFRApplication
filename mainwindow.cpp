@@ -18,43 +18,32 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(button1, &QPushButton::clicked, this, &MainWindow::button1Clicked); // Connect button
 
-  auto *mainLayout = new QVBoxLayout; // A vertical layout to hold everything
+  auto *centralWidget = new QWidget;
+  gridLayout = new QGridLayout(centralWidget);
+  setCentralWidget(centralWidget);
 
-  // ---- Column Label Setup ----
-  auto* columnLabelLayout = new QHBoxLayout; // Horizontal layout for column labels
+  // Column Labels
   QStringList cardRanks = {"A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"};
   for (int i = 0; i < 13; ++i) {
     auto *label = new QLabel(cardRanks[i]);
-    columnLabelLayout->addWidget(label);
+    label->setAlignment(Qt::AlignCenter); // Center the label text
+    gridLayout->addWidget(label, 0, i + 1); // Place in top row, offset for row labels
   }
-  mainLayout->addLayout(columnLabelLayout); // Add column labels to main layout
 
-  // ---- Grid Setup ----
-  auto *centralWidget = new QWidget;
-  gridLayout = new QGridLayout(centralWidget);
-  mainLayout->addWidget(centralWidget); // Add grid to main layout
+  // Row labels
+  for (int i = 0; i < 13; ++i) {
+    auto *label = new QLabel(cardRanks[i]);
+    label->setAlignment(Qt::AlignCenter); // Center the label text
+    gridLayout->addWidget(label, i + 1, 0);  // Place in first column, offset for column labels
+  }
 
   int numSquares = 169;
   for (int i = 0; i < numSquares; ++i) {
     auto *square = new CustomSquare();
     square->setValues(rand()/(float)RAND_MAX, rand()/(float)RAND_MAX, rand()/(float)RAND_MAX); // Example random values
-    gridLayout->addWidget(square, i / 13, i % 13);
+    gridLayout->addWidget(square, i / 13 + 1, i % 13 + 1);
     squares.append(square);
   }
-
-
-// Row labels (similarly)
-  auto* rowLabelLayout = new QVBoxLayout;
-  for (int i = 0; i < 13; ++i) {
-    auto *label = new QLabel(cardRanks[i]);
-    rowLabels.append(label);
-    rowLabelLayout->addWidget(label);
-  }
-  gridLayout->addLayout(rowLabelLayout, 1, 0, 13, 1);
-
-  auto *mainWidget = new QWidget; // Create a new widget for the main layout
-  mainWidget->setLayout(mainLayout); // Set the layout on this widget
-  setCentralWidget(mainWidget);
 
 }
 
