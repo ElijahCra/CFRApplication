@@ -16,9 +16,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(CFRApp main.cpp
-        mainwindow.cpp
-        customsquare.cpp)
+add_executable(CFRApp main.cpp mainwindow.cpp customsquare.cpp)
 target_link_libraries(CFRApp
         Qt::Core
         Qt::Gui

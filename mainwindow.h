@@ -1,26 +1,22 @@
-//
-// Created by Elijah Crain on 2/25/24.
-//
-
-#ifndef CFRAPP__MAINWINDOW_H_
-#define CFRAPP__MAINWINDOW_H_
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QGridLayout>
-#include <QToolBar>
-#include <QPushButton>
-#include <QWidget> // Base class for custom squares (if needed)
+#include <QFunctionPointer>
 #include "customsquare.h"
-#include <QLabel>
+#include <QGridLayout>
 
+QT_BEGIN_NAMESPACE
+class QAction;
+class QActionGroup;
+class QLabel;
+class QMenu;
+QT_END_NAMESPACE
 
-namespace Ui {
-class MainWindow;
-}
-
+//! [0]
 class MainWindow : public QMainWindow
 {
- Q_OBJECT
+  Q_OBJECT
 
   QVector<CustomSquare*> squares;
 
@@ -28,18 +24,64 @@ class MainWindow : public QMainWindow
   QVector<QLabel*> rowLabels; // Keep track of row labels
 
  public:
-  explicit MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+  MainWindow();
 
+ protected:
+#ifndef QT_NO_CONTEXTMENU
+  void contextMenuEvent(QContextMenuEvent *event) override;
+#endif // QT_NO_CONTEXTMENU
+//! [0]
+
+//! [1]
  private slots:
-  void button1Clicked();
+  void texasHoldem();
+  void preFlop();
+  void iterations();
+  void maxBets();
+  void start();
+  void pause();
+  void stop();
+  void copy();
+  void paste();
+  void bold();
+  void italic();
 
+  void about();
+  void aboutQt();
+//! [1]
+
+//! [2]
  private:
-  Ui::MainWindow *ui{};
+  void createActions();
+  void createMenus();
+//! [2]
+
+//! [3]
   QGridLayout *gridLayout;
-  QToolBar *toolBar;
-  // Potentially QVector<QWidget*> squares;  // If not using a custom square widget
+
+  QMenu *gameSettingsMenu;
+  QMenu *runMenu;
+  QMenu *subMenu;
+  QMenu *helpMenu;
+  QMenu *gameTypesMenu;
+  //QActionGroup *alignmentGroup;
+  //QActionGroup *GameTypeGroup;
+  QAction *texasHoldemAct;
+  QAction *preFlopAct;
+  QAction *iterationsAct;
+  QAction *maxBetsAct;
+  QAction *exitAct;
+  QAction *startAct;
+  QAction *pauseAct;
+  QAction *stopAct;
+  QAction *copyAct;
+  QAction *pasteAct;
+  QAction *boldAct;
+  QAction *italicAct;
+  QAction *aboutAct;
+  QAction *aboutQtAct;
+  //QLabel *infoLabel;
 };
+//! [3]
 
-
-#endif //CFRAPP__MAINWINDOW_H_
+#endif
