@@ -26,5 +26,4 @@ void CustomSquare::paintEvent(QPaintEvent *event) {
   painter.fillRect(bar1Width, 0, bar2Width, height(), Qt::green);
   painter.fillRect(bar1Width + bar2Width, 0, bar3Width, height(), Qt::blue);
 
-  // ... Add code to draw the numbers using painter.drawText()
 }

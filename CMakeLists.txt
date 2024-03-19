@@ -10,18 +10,24 @@ if (WIN32)
     set(CMAKE_PREFIX_PATH "C:/Qt/6.6.2/mingw_64")
 endif ()
 
+add_subdirectory(2PlayerCFR)
 find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
         REQUIRED)
 
-add_executable(CFRApp main.cpp mainwindow.cpp customsquare.cpp)
+add_executable(CFRApp main.cpp mainwindow.cpp customsquare.cpp
+        CFRThread.cpp
+        CFRThread.hpp)
 target_link_libraries(CFRApp
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        CFR
 )
+
+add_compile_options(-Wno-dev)
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(DEBUG_SUFFIX)

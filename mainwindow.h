@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFunctionPointer>
 #include "customsquare.h"
+#include "CFRThread.hpp"
 #include <QGridLayout>
 
 QT_BEGIN_NAMESPACE
@@ -30,9 +31,7 @@ class MainWindow : public QMainWindow
 #ifndef QT_NO_CONTEXTMENU
   void contextMenuEvent(QContextMenuEvent *event) override;
 #endif // QT_NO_CONTEXTMENU
-//! [0]
 
-//! [1]
  private slots:
   void texasHoldem();
   void preFlop();
@@ -48,15 +47,12 @@ class MainWindow : public QMainWindow
 
   void about();
   void aboutQt();
-//! [1]
 
-//! [2]
  private:
+  CFRThread *cfrThread;
+  QTimer *timer;
   void createActions();
   void createMenus();
-//! [2]
-
-//! [3]
   QGridLayout *gridLayout;
 
   QMenu *gameSettingsMenu;
@@ -81,7 +77,7 @@ class MainWindow : public QMainWindow
   QAction *aboutAct;
   QAction *aboutQtAct;
   //QLabel *infoLabel;
+  void updateSquare(int row, int col, float value1, float value2, float value3);
 };
-//! [3]
 
 #endif
