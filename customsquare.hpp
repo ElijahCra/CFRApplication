@@ -24,7 +24,7 @@ class CustomSquare : public QWidget
   void paintEvent(QPaintEvent *event) override;
 
  private:
-  float num1, num2, num3;
+  float num1 = 1.f/3.f, num2 = 1.f/3.f, num3 = 1.f/3.f;
 };
 
 #endif //CFRAPP__CUSTOMSQUARE_H_

@@ -17,27 +17,22 @@ class CFRThread : public QThread
 
   void run() override {
     CFR::RegretMinimizer<Preflop::Game> regret_minimizer;
-    int maxIterations = 5000;
-      regret_minimizer.Train(5000);
+    int batchSize = 5000;
+      regret_minimizer.Train(batchSize);
+      std::array<std::vector<float>,169> strats;
       for (int row = 0; row < 13; ++row) {
         for (int col = 0; col < 13; ++col) {
-          auto strat = regret_minimizer.getNodeStrategy(std::format("{}",row*13+col));
-
-          float value1 = strat[0];
-          float value2 = strat[1];
-          float value3 = strat[2];
+          strats[row*13+col] = regret_minimizer.getNodeAverageStrategy(std::format("{}",row*13+col));
 
           // Emit a signal to update the square at (row, col)
-          emit squareUpdated(row, col, value1, value2, value3);
+          emit squareUpdated(strats);
 
-          // Add a small delay to visualize the updates
-          QThread::msleep(100);
         }
       }
   }
 
   signals:
-      void squareUpdated(int row, int col, float value1, float value2, float value3);
+      void squareUpdated(std::array<std::vector<float>,169> strats);
 };
 
 #endif //CFRAPP__CFRTHREAD_HPP_

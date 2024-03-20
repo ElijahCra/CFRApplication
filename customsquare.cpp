@@ -22,8 +22,8 @@ void CustomSquare::paintEvent(QPaintEvent *event) {
   int bar2Width = static_cast<int>(static_cast<float>(totalWidth)*num2);
   int bar3Width = totalWidth - bar1Width - bar2Width;
 
-  painter.fillRect(0, 0, bar1Width, height(), Qt::red);
-  painter.fillRect(bar1Width, 0, bar2Width, height(), Qt::green);
-  painter.fillRect(bar1Width + bar2Width, 0, bar3Width, height(), Qt::blue);
+  painter.fillRect(0, 0, bar1Width, height(), Qt::green);
+  painter.fillRect(bar1Width, 0, bar2Width, height(), Qt::red);
+  painter.fillRect(bar1Width + bar2Width, 0, bar3Width, height(), Qt::black);
 
 }

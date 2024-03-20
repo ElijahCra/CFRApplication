@@ -29,7 +29,7 @@ MainWindow::MainWindow()
   int numSquares = 169;
   for (int i = 0; i < numSquares; ++i) {
     auto *square = new CustomSquare();
-    square->setValues(rand()/(float)RAND_MAX, rand()/(float)RAND_MAX, rand()/(float)RAND_MAX); // Example random values
+    square->setValues(1.f/3.f, 1.f/3.f, 1.f/3.f);
     gridLayout->addWidget(square, i / 13 + 1, i % 13 + 1);
     squares.append(square);
   }
@@ -87,8 +87,10 @@ void MainWindow::maxBets()
 
 void MainWindow::start()
 {
+  int epochs = 5;
+  for (int i=0; i<epochs; ++i) {
   cfrThread->run();
-}
+}}
 
 void MainWindow::pause()
 {
@@ -101,25 +103,6 @@ void MainWindow::stop()
   //cfrThread->wait();
 }
 
-void MainWindow::copy()
-{
-
-}
-
-void MainWindow::bold()
-{
-
-}
-
-void MainWindow::italic()
-{
-
-}
-
-void MainWindow::paste()
-{
-
-}
 
 void MainWindow::about()
 {
@@ -133,7 +116,6 @@ void MainWindow::aboutQt()
 
 }
 
-//! [4]
 void MainWindow::createActions() {
 //! [5]
   texasHoldemAct = new QAction(

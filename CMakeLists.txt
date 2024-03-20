@@ -22,7 +22,8 @@ add_executable(CFRApp
         mainwindow.cpp
         customsquare.cpp
         CFRThread.cpp
-        CFRThread.hpp)
+        CFRThread.hpp
+        Worker.hpp)
 target_link_libraries(CFRApp
         Qt::Core
         Qt::Gui
