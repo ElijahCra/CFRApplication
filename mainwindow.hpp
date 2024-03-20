@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QFunctionPointer>
-#include "customsquare.h"
+#include "customsquare.hpp"
 #include "CFRThread.hpp"
 #include <QGridLayout>
 
@@ -18,9 +18,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
-
   QVector<CustomSquare*> squares;
-
   QVector<QLabel*> columnLabels; // Keep track of column labels
   QVector<QLabel*> rowLabels; // Keep track of row labels
 
@@ -44,7 +42,6 @@ class MainWindow : public QMainWindow
   void paste();
   void bold();
   void italic();
-
   void about();
   void aboutQt();
 

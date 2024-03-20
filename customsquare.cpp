@@ -2,7 +2,7 @@
 // Created by Elijah Crain on 2/25/24.
 //
 
-#include "customsquare.h"
+#include "customsquare.hpp"
 #include <iostream>
 
 CustomSquare::CustomSquare(QWidget *parent) : QWidget(parent) {}

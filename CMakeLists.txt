@@ -17,7 +17,10 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(CFRApp main.cpp mainwindow.cpp customsquare.cpp
+add_executable(CFRApp
+        main.cpp
+        mainwindow.cpp
+        customsquare.cpp
         CFRThread.cpp
         CFRThread.hpp)
 target_link_libraries(CFRApp
@@ -25,7 +28,10 @@ target_link_libraries(CFRApp
         Qt::Gui
         Qt::Widgets
         CFR
+        Preflop
+        Texas
 )
+target_include_directories(CFRApp PUBLIC 2PlayerCFR)
 
 add_compile_options(-Wno-dev)
 

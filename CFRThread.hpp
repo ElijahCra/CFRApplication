@@ -6,8 +6,8 @@
 #define CFRAPP__CFRTHREAD_HPP_
 
 #include <QtCore>
-#include "../2PlayerCFR/CFR/RegretMinimizer.hpp"
-#include "../2PlayerCFR/Game/GameImpl/Preflop/Game.hpp"
+#include "2PlayerCFR/CFR/RegretMinimizer.hpp"
+#include "2PlayerCFR/Game/GameImpl/Preflop/Game.hpp"
 class CFRThread : public QThread
 {
   Q_OBJECT
@@ -16,19 +16,16 @@ class CFRThread : public QThread
   CFRThread(QObject *parent = nullptr) : QThread(parent) {}
 
   void run() override {
-    // Run the CFR function here
-    // Emit signals to update the squares
     CFR::RegretMinimizer<Preflop::Game> regret_minimizer;
-    int maxIterations = 1000000;
-    for (int i=0; i < maxIterations; i+=5000) {
+    int maxIterations = 5000;
       regret_minimizer.Train(5000);
       for (int row = 0; row < 13; ++row) {
         for (int col = 0; col < 13; ++col) {
-          regret_minimizer.
-          // Calculate the new values for the square at (row, col)
-          float value1 = row*13+col; // Calculate value1
-          float value2 = ...; // Calculate value2
-          float value3 = ...; // Calculate value3
+          auto strat = regret_minimizer.getNodeStrategy(std::format("{}",row*13+col));
+
+          float value1 = strat[0];
+          float value2 = strat[1];
+          float value3 = strat[2];
 
           // Emit a signal to update the square at (row, col)
           emit squareUpdated(row, col, value1, value2, value3);
@@ -37,8 +34,6 @@ class CFRThread : public QThread
           QThread::msleep(100);
         }
       }
-    }
-
   }
 
   signals:

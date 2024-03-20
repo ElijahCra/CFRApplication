@@ -3,7 +3,7 @@
 //
 #include <QtWidgets>
 
-#include "mainwindow.h"
+#include "mainwindow.hpp"
 
 //! [0]
 MainWindow::MainWindow()
@@ -44,7 +44,7 @@ MainWindow::MainWindow()
   resize(800, 400);
 
   cfrThread = new CFRThread(this);
-  connect(cfrThread, &CFRThread::squareUpdated, this, &MainWindow::updateSquare());
+  connect(cfrThread, &CFRThread::squareUpdated, this, &MainWindow::updateSquare);
 
 }
 
@@ -231,8 +231,8 @@ void MainWindow::createActions() {
   aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
   connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
   connect(aboutQtAct, &QAction::triggered, this, &MainWindow::aboutQt);
-
-  void MainWindow::createMenus() {
+}
+void MainWindow::createMenus() {
     gameSettingsMenu = menuBar()->addMenu(tr("&Settings"));
     gameTypesMenu = gameSettingsMenu->addMenu(tr("&Game Types"));
     gameTypesMenu->addAction(texasHoldemAct);
@@ -259,5 +259,5 @@ void MainWindow::createActions() {
     subMenu->addAction(boldAct);
     subMenu->addAction(italicAct);
     subMenu->addSeparator()->setText(tr("Alignment"));
-  }
 }
+
