@@ -5,7 +5,6 @@
 
 #include "mainwindow.hpp"
 
-//! [0]
 MainWindow::MainWindow()
 {
   QWidget *widget = new QWidget;
@@ -43,10 +42,37 @@ MainWindow::MainWindow()
   setMinimumSize(160, 160);
   resize(800, 400);
 
-  cfrThread = new CFRThread(this);
-  connect(cfrThread, &CFRThread::squareUpdated, this, &MainWindow::updateSquare);
-
+  controller = new Controller();
+  connect(controller, &Controller::resultsReadyForUI, this, &MainWindow::handleControllerResults);
 }
+
+
+
+void MainWindow::handleControllerResults(const std::array<std::vector<float>, 169>& strats) {
+  // Iterate over 'strats' and call 'updateSquare' accordingly
+  for (int row = 0; row < 13; ++row) {
+    for (int col = 0; col < 13; ++col) {
+      int index = row * 13 + col;
+      std::vector<float> const& values = strats[index];
+      updateSquare(row, col, values[0], values[1], values[2]);
+    }
+  }
+}
+
+void MainWindow::updateSquare(int row, int col, float value1, float value2, float value3)
+{
+  int index = row * 13 + col;
+  if (index >= 0 && index < squares.size()) {
+    squares[index]->setValues(value1, value2, value3);
+  }
+}
+
+void MainWindow::start()
+{
+  int epochs = 500;
+  for (int i=0; i<epochs; ++i) {
+    controller->operate();
+  }}
 
 #ifndef QT_NO_CONTEXTMENU
 void MainWindow::contextMenuEvent(QContextMenuEvent *event)
@@ -56,14 +82,6 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
   menu.exec(event->globalPos());
 }
 #endif // QT_NO_CONTEXTMENU
-
-void MainWindow::updateSquare(int row, int col, float value1, float value2, float value3)
-{
-  int index = row * 13 + col;
-  if (index >= 0 && index < squares.size()) {
-    squares[index]->setValues(value1, value2, value3);
-  }
-}
 
 void MainWindow::texasHoldem()
 {
@@ -85,12 +103,7 @@ void MainWindow::maxBets()
 
 }
 
-void MainWindow::start()
-{
-  int epochs = 5;
-  for (int i=0; i<epochs; ++i) {
-  cfrThread->run();
-}}
+
 
 void MainWindow::pause()
 {
@@ -99,8 +112,6 @@ void MainWindow::pause()
 
 void MainWindow::stop()
 {
-  //cfrThread->terminate();
-  //cfrThread->wait();
 }
 
 
@@ -168,41 +179,8 @@ void MainWindow::createActions() {
   stopAct->setStatusTip(tr("Cancel Computation"));
   connect(stopAct, &QAction::triggered, this, &MainWindow::stop);
 
-  copyAct = new QAction(
-      tr("&Copy"), this);
-  copyAct->setShortcuts(QKeySequence::Copy);
-  copyAct->setStatusTip(tr("Copy the current selection's contents to the "
-                           "clipboard"));
-  connect(copyAct, &QAction::triggered, this, &MainWindow::copy);
 
-  pasteAct = new QAction(
-      tr("&Paste"), this);
-  pasteAct->setShortcuts(QKeySequence::Paste);
-  pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
-                            "selection"));
-  connect(pasteAct, &QAction::triggered, this, &MainWindow::paste);
 
-  boldAct = new QAction(
-      tr("&Bold"), this);
-  boldAct->setCheckable(true);
-  boldAct->setShortcut(QKeySequence::Bold);
-  boldAct->setStatusTip(tr("Make the text bold"));
-  connect(boldAct, &QAction::triggered, this, &MainWindow::bold);
-
-  QFont boldFont = boldAct->font();
-  boldFont.setBold(true);
-  boldAct->setFont(boldFont);
-
-  italicAct = new QAction(
-      tr("&Italic"), this);
-  italicAct->setCheckable(true);
-  italicAct->setShortcut(QKeySequence::Italic);
-  italicAct->setStatusTip(tr("Make the text italic"));
-  connect(italicAct, &QAction::triggered, this, &MainWindow::italic);
-
-  QFont italicFont = italicAct->font();
-  italicFont.setItalic(true);
-  italicAct->setFont(italicFont);
 
   aboutAct = new QAction(
       tr("&About"), this);
@@ -229,17 +207,11 @@ void MainWindow::createMenus() {
     runMenu->addAction(pauseAct);
     runMenu->addSeparator();
     runMenu->addAction(stopAct);
-    runMenu->addAction(copyAct);
-    runMenu->addAction(pasteAct);
+
     runMenu->addSeparator();
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
     helpMenu->addAction(aboutQtAct);
-
-    subMenu = runMenu->addMenu(tr("&Format"));
-    subMenu->addAction(boldAct);
-    subMenu->addAction(italicAct);
-    subMenu->addSeparator()->setText(tr("Alignment"));
 }
 
