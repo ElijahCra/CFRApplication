@@ -50,9 +50,9 @@ MainWindow::MainWindow()
 
 void MainWindow::handleControllerResults(const std::array<std::vector<float>, 169>& strats) {
   // Iterate over 'strats' and call 'updateSquare' accordingly
-  for (int row = 0; row < 13; ++row) {
-    for (int col = 0; col < 13; ++col) {
-      int index = row * 13 + col;
+  for (uint32_t row = 0; row < 13; ++row) {
+    for (uint32_t col = 0; col < 13; ++col) {
+      uint32_t index = mapper[row][col];
       std::vector<float> const& values = strats[index];
       updateSquare(row, col, values[0], values[1], values[2]);
     }
