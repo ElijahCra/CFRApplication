@@ -45,32 +45,32 @@ class MainWindow : public QMainWindow
 
  private:
   Controller *controller;
-  QTimer *timer;
+  QTimer *timer{};
   void createActions();
   void createMenus();
   QGridLayout *gridLayout;
 
-  QMenu *gameSettingsMenu;
-  QMenu *runMenu;
-  QMenu *helpMenu;
-  QMenu *gameTypesMenu;
+  QMenu *gameSettingsMenu{};
+  QMenu *runMenu{};
+  QMenu *helpMenu{};
+  QMenu *gameTypesMenu{};
   //QActionGroup *alignmentGroup;
   //QActionGroup *GameTypeGroup;
-  QAction *texasHoldemAct;
-  QAction *preFlopAct;
-  QAction *iterationsAct;
-  QAction *maxBetsAct;
-  QAction *exitAct;
-  QAction *startAct;
-  QAction *pauseAct;
-  QAction *stopAct;
-  QAction *aboutAct;
-  QAction *aboutQtAct;
+  QAction *texasHoldemAct{};
+  QAction *preFlopAct{};
+  QAction *iterationsAct{};
+  QAction *maxBetsAct{};
+  QAction *exitAct{};
+  QAction *startAct{};
+  QAction *pauseAct{};
+  QAction *stopAct{};
+  QAction *aboutAct{};
+  QAction *aboutQtAct{};
   //QLabel *infoLabel;
   void updateSquare(int row, int col, float value1, float value2, float value3);
 
  static constexpr std::array<std::array<uint32_t,13>,13> mapper = { 90, 168, 167,166,165,164,163,162,161,160,159,158,157,
-                                                89,77,156,155,154,153,152,151,150,149,148,147,146,
+                                                           89,77,156,155,154,153,152,151,150,149,148,147,146,
                                                            88,76,65,145,144,143,142,141,140,139,138,137,136,
                                                            87,75,64,54,135,134,133,132,131,130,129,128,127,
                                                            86,74,63,53,44,126,125,124,123,122,121,120,119,

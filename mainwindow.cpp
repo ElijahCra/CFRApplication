@@ -28,7 +28,7 @@ MainWindow::MainWindow()
   int numSquares = 169;
   for (int i = 0; i < numSquares; ++i) {
     auto *square = new CustomSquare();
-    square->setValues(1.f/3.f, 1.f/3.f, 1.f/3.f);
+    square->setValues(1.F/3.F, 1.F/3.F, 1.F/3.F);
     gridLayout->addWidget(square, i / 13 + 1, i % 13 + 1);
     squares.append(square);
   }

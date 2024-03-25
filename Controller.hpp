@@ -6,6 +6,7 @@
 #define CFRAPP__CONTROLLER_HPP_
 
 #include "Worker.hpp"
+#include "RegretMinimizer.hpp"
 class Controller : public QObject
 {
  Q_OBJECT

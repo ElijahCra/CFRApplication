@@ -17,7 +17,9 @@ class Worker : public QObject
   void doWork();
 
  signals:
-  void resultReady(const std::array<std::vector<float>,169> strats);
+  void resultReady(std::array<std::vector<float>,169> strats);
+private:
+ CFR::RegretMinimizer<Preflop::Game> minimizer;
 };
 
 
