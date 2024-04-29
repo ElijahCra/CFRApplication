@@ -8,18 +8,17 @@
 #include <QtCore>
 #include "2PlayerCFR/CFR/RegretMinimizer.hpp"
 #include "2PlayerCFR/Game/GameImpl/Preflop/Game.hpp"
-#include "Controller.hpp"
 class Worker : public QObject
 {
  Q_OBJECT
 
  public slots:
-  void doWork();
+  void doWork(uint32_t epochs, uint32_t iterations);
 
  signals:
   void resultReady(std::array<std::vector<float>,169> strats);
 private:
- CFR::RegretMinimizer<Preflop::Game> minimizer;
+  CFR::RegretMinimizer<Preflop::Game> minimizer;
 };
 
 

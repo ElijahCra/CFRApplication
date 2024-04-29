@@ -18,7 +18,7 @@ class Controller : public QObject
  public slots:
   void handleResults(const std::array<std::vector<float>,169>&);
  signals:
-  void operate();
+  void operate(uint32_t epochs, uint32_t iterations);
   void resultsReadyForUI(const std::array<std::vector<float>, 169>&);
 };
 

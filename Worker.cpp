@@ -3,10 +3,8 @@
 //
 #include "Worker.hpp"
 
-void Worker::doWork() {
-
-
-  int batchSize = 5000;
+void Worker::doWork(uint32_t epochs, uint32_t iterations) {
+  int batchSize = 2000;
   minimizer.Train(batchSize);
   std::array<std::vector<float>,169> strats;
   for (int row = 0; row < 13; ++row) {
