@@ -8,6 +8,51 @@
 
 MainWindow::MainWindow()
 {
+  setupMainWidget();
+  createActions();
+  createMenus();
+
+  const QString message = tr("Select Run and Start to begin computing");
+  statusBar()->showMessage(message);
+
+  setWindowTitle(tr("CFR"));
+  setMinimumSize(160, 160);
+  resize(800, 600);
+
+  connect(controller, &Controller::resultsReadyForUI, this, &MainWindow::handleControllerResults);
+}
+
+
+
+void MainWindow::handleControllerResults(const std::array<std::vector<float>, 169>& strats) {
+  // Iterate over 'strats' and call 'updateSquare' accordingly
+  for (u_int32_t row = 0; row < 13; ++row) {
+    for (u_int32_t col = 0; col < 13; ++col) {
+      u_int32_t index = mapper[row][col];
+      std::vector<float> const& values = strats[index];
+      updateSquare(row, col, values[0], values[1], values[2]);
+    }
+  }
+}
+
+void MainWindow::updateSquare(const uint32_t row, const uint32_t col, const float value1, const float value2, const float value3)
+{
+  uint32_t index = row * 13 + col;
+  if (index < squares.size()) {
+    squares[index]->setValues(value1, value2, value3);
+  }
+}
+
+#ifndef QT_NO_CONTEXTMENU
+void MainWindow::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu menu(this);
+  menu.addAction(stopAct);
+  menu.exec(event->globalPos());
+}
+#endif // QT_NO_CONTEXTMENU
+
+void MainWindow::setupMainWidget() {
   auto *widget = new QWidget;
   setCentralWidget(widget);
   gridLayout = new QGridLayout(widget);
@@ -33,105 +78,27 @@ MainWindow::MainWindow()
     gridLayout->addWidget(square, i / 13 + 1, i % 13 + 1);
     squares.append(square);
   }
-  createActions();
-  createMenus();
-
-  const QString message = tr("Select Run and Start to begin computing");
-  statusBar()->showMessage(message);
-
-
-
-  setWindowTitle(tr("CFR"));
-  setMinimumSize(160, 160);
-  resize(800, 600);
-
-  controller = new Controller();
-  connect(controller, &Controller::resultsReadyForUI, this, &MainWindow::handleControllerResults);
 }
 
 
-
-void MainWindow::handleControllerResults(const std::array<std::vector<float>, 169>& strats) {
-  // Iterate over 'strats' and call 'updateSquare' accordingly
-  for (u_int32_t row = 0; row < 13; ++row) {
-    for (u_int32_t col = 0; col < 13; ++col) {
-      u_int32_t index = mapper[row][col];
-      std::vector<float> const& values = strats[index];
-      updateSquare(row, col, values[0], values[1], values[2]);
-    }
-  }
-}
-
-void MainWindow::updateSquare(const uint32_t row, const uint32_t col, const float value1, const float value2, const float value3)
-{
-  uint32_t index = row * 13 + col;
-  if (index < squares.size()) {
-    squares[index]->setValues(value1, value2, value3);
-  }
-}
-
-void MainWindow::start()
-{
-  statusBar()->clearMessage();
-  shouldStop = false;
-
-  int epochs = 5000;
-  int i=0;
-  while (i<epochs && !shouldStop) {
-    ++i;
-    if (shouldStop) {break;}
-    controller->operate(epochs, iterationsCount);
-  }}
-
-#ifndef QT_NO_CONTEXTMENU
-void MainWindow::contextMenuEvent(QContextMenuEvent *event)
-{
-  QMenu menu(this);
-  menu.addAction(stopAct);
-  menu.exec(event->globalPos());
-}
-#endif // QT_NO_CONTEXTMENU
-
-void MainWindow::texasHoldem()
-{
-
-}
-
-void MainWindow::preFlop()
-{
-
-}
-
-void MainWindow::iterations(){}
-
-void MainWindow::maxBets()
-{
-
-}
-
-
-
-void MainWindow::pause()
-{
-
-}
-
-void MainWindow::stop()
-{
-  shouldStop = true;
-}
-
-
-void MainWindow::about()
-{
-  QMessageBox::about(this, tr("About Menu"),
-                     tr("The <b>Menu</b> example shows how to create "
-                        "menu-bar menus and context menus."));
-}
-
-void MainWindow::aboutQt()
-{
-
+void MainWindow::createMenus() {
+    gameSettingsMenu = menuBar()->addMenu(tr("&Settings"));
+    gameTypesMenu = gameSettingsMenu->addMenu(tr("&Game Types"));
+    gameTypesMenu->addAction(texasHoldemAct);
+    gameTypesMenu->addAction(preFlopAct);
+    gameSettingsMenu->addAction(iterationsAct);
+    gameSettingsMenu->addAction(maxBetsAct);
+    gameSettingsMenu->addSeparator();
+    gameSettingsMenu->addAction(exitAct);
+    runMenu = menuBar()->addMenu(tr("&Run"));
+    runMenu->addAction(startAct);
+    runMenu->addAction(pauseAct);
+    runMenu->addSeparator();
+    runMenu->addAction(stopAct);
+    runMenu->addSeparator();
+    helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu->addAction(aboutAct);
+    helpMenu->addAction(aboutQtAct);
 }
 
 void MainWindow::createActions() {
@@ -193,23 +160,52 @@ void MainWindow::createActions() {
   connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
   connect(aboutQtAct, &QAction::triggered, this, &MainWindow::aboutQt);
 }
-void MainWindow::createMenus() {
-    gameSettingsMenu = menuBar()->addMenu(tr("&Settings"));
-    gameTypesMenu = gameSettingsMenu->addMenu(tr("&Game Types"));
-    gameTypesMenu->addAction(texasHoldemAct);
-    gameTypesMenu->addAction(preFlopAct);
-    gameSettingsMenu->addAction(iterationsAct);
-    gameSettingsMenu->addAction(maxBetsAct);
-    gameSettingsMenu->addSeparator();
-    gameSettingsMenu->addAction(exitAct);
-    runMenu = menuBar()->addMenu(tr("&Run"));
-    runMenu->addAction(startAct);
-    runMenu->addAction(pauseAct);
-    runMenu->addSeparator();
-    runMenu->addAction(stopAct);
-    runMenu->addSeparator();
-    helpMenu = menuBar()->addMenu(tr("&Help"));
-    helpMenu->addAction(aboutAct);
-    helpMenu->addAction(aboutQtAct);
 
+void MainWindow::texasHoldem()
+{
+  //connect to switch game type
 }
+
+void MainWindow::preFlop()
+{
+  //connect to switch game type
+}
+
+void MainWindow::iterations(){
+  // number of training iterations
+}
+
+void MainWindow::maxBets()
+{
+  //max depth per round
+}
+
+void MainWindow::pause()
+{
+  // pause calculation
+}
+
+void MainWindow::start()
+{
+  statusBar()->clearMessage();
+  controller->operate(epochs, iterationsCount);
+}
+
+void MainWindow::stop()
+{
+  controller->handleStop();
+}
+
+
+void MainWindow::about()
+{
+  QMessageBox::about(this, tr("About Menu"),
+                     tr("The <b>Menu</b> example shows how to create "
+                        "menu-bar menus and context menus."));
+}
+
+void MainWindow::aboutQt()
+{
+  //default qt info
+}
+

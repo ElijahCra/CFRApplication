@@ -17,7 +17,6 @@ class QLabel;
 class QMenu;
 QT_END_NAMESPACE
 
-//! [0]
 class MainWindow : public QMainWindow
 {
  Q_OBJECT
@@ -47,12 +46,12 @@ class MainWindow : public QMainWindow
   void handleControllerResults(const std::array<std::vector<float>, 169>& strats);
 
  private:
-  unsigned int iterationsCount;
-  unsigned int epochs;
-  std::atomic_bool shouldStop{}; // Flag to control loop termination
-  Controller *controller{};
+  unsigned int iterationsCount = 2000;
+  unsigned int epochs = 400;
+  Controller *controller = new Controller();
   void createActions();
   void createMenus();
+  void setupMainWidget();
   QGridLayout *gridLayout;
 
   QMenu *gameSettingsMenu{};
@@ -60,8 +59,6 @@ class MainWindow : public QMainWindow
   QMenu *helpMenu{};
   QMenu *gameTypesMenu{};
 
-  //QActionGroup *alignmentGroup;
-  //QActionGroup *GameTypeGroup;
   QAction *texasHoldemAct{};
   QAction *preFlopAct{};
   QAction *iterationsAct{};
@@ -72,7 +69,6 @@ class MainWindow : public QMainWindow
   QAction *stopAct{};
   QAction *aboutAct{};
   QAction *aboutQtAct{};
-  //QLabel *infoLabel;
   void updateSquare(uint32_t row, uint32_t col, float value1, float value2, float value3);
 
  static constexpr std::array<std::array<uint32_t,13>,13> mapper = { 90,168,167,166,165,164,163,162,161,160,159,158,157,

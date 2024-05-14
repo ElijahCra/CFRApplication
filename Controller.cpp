@@ -20,3 +20,7 @@ void Controller::handleResults(const std::array<std::vector<float>, 169>& strats
   // Do any necessary processing or manipulation of 'strats' if needed
   emit resultsReadyForUI(strats);
 }
+
+void Controller::handleStop() {
+  workerThread.requestInterruption();
+}
