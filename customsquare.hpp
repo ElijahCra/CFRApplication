@@ -22,9 +22,13 @@ class CustomSquare : public QWidget
 
  protected:
   void paintEvent(QPaintEvent *event) override;
+  void setSuited();
+  void setPair();
 
  private:
-  float num1 = 1.f/3.f, num2 = 1.f/3.f, num3 = 1.f/3.f;
+  float num1 = 1.f/3.f;
+  float num2 = 1.f/3.f;
+  float num3 = 1.f/3.f;
 };
 
 #endif //CFRAPP__CUSTOMSQUARE_H_
