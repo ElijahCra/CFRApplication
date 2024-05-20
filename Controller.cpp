@@ -3,17 +3,19 @@
 //
 
 #include "Controller.hpp"
+#include "MyWorker.hpp"
 Controller::Controller() {
-  auto *worker = new Worker;
-  worker->moveToThread(&workerThread);
-  connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-  connect(this, &Controller::operate, worker, &Worker::doWork);
-  connect(worker, &Worker::resultReady, this, &Controller::handleResults);
-  workerThread.start();
+  worker->moveToThread(&thread);
+  //connect(worker, &MyWorker::finished, worker, &QObject::deleteLater);
+  connect(worker, &QObject::destroyed, &thread, &QThread::quit);
+  connect(this, &Controller::operate, worker, &MyWorker::doWork);
+  connect(worker, &MyWorker::resultReady, this, &Controller::handleResults);
+  thread.start();
 }
+
 Controller::~Controller() {
-  workerThread.quit();
-  workerThread.wait();
+  thread.quit();
+  thread.wait();
 }
 
 void Controller::handleResults(const std::array<std::vector<float>, 169>& strats) {
@@ -21,6 +23,14 @@ void Controller::handleResults(const std::array<std::vector<float>, 169>& strats
   emit resultsReadyForUI(strats);
 }
 
-void Controller::handleStop() {
-  workerThread.requestInterruption();
+void Controller::handleCancel() const {
+  worker->cancel();
+}
+
+void Controller::handlePause() const {
+  worker->pause();
+}
+
+void Controller::handleResume() const {
+  worker->resume();
 }

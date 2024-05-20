@@ -4,7 +4,7 @@
 #include <QtWidgets>
 #include "mainwindow.hpp"
 #include "Controller.hpp"
-
+#include "MyWorker.hpp"
 
 MainWindow::MainWindow()
 {
@@ -92,6 +92,7 @@ void MainWindow::createMenus() {
     gameSettingsMenu->addAction(exitAct);
     runMenu = menuBar()->addMenu(tr("&Run"));
     runMenu->addAction(startAct);
+    runMenu->addAction(resumeAct);
     runMenu->addAction(pauseAct);
     runMenu->addSeparator();
     runMenu->addAction(stopAct);
@@ -138,6 +139,12 @@ void MainWindow::createActions() {
   startAct->setStatusTip(tr("Start Computation"));
   connect(startAct, &QAction::triggered, this, &MainWindow::start);
 
+  resumeAct = new QAction(
+      tr("&Resume"), this);
+  //resumeAct->setShortcuts(QKeySequence::Refresh);
+  resumeAct->setStatusTip(tr("Resume Computation"));
+  connect(resumeAct, &QAction::triggered, this, &MainWindow::resume);
+
   pauseAct = new QAction(
       tr("&Pause"), this);
   pauseAct->setShortcuts(QKeySequence::Redo);
@@ -182,7 +189,7 @@ void MainWindow::maxBets()
 
 void MainWindow::pause()
 {
-  // pause calculation
+  controller->handlePause();
 }
 
 void MainWindow::start()
@@ -191,9 +198,13 @@ void MainWindow::start()
   controller->operate(epochs, iterationsCount);
 }
 
+void MainWindow::resume() {
+  controller->handleResume();
+}
+
 void MainWindow::stop()
 {
-  controller->handleStop();
+  controller->handleCancel();
 }
 
 

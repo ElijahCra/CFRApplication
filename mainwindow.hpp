@@ -38,6 +38,7 @@ class MainWindow : public QMainWindow
   void iterations();
   void maxBets();
   void start();
+  void resume();
   void pause();
   void stop();
   void about();
@@ -52,7 +53,7 @@ class MainWindow : public QMainWindow
   void createActions();
   void createMenus();
   void setupMainWidget();
-  QGridLayout *gridLayout;
+  QGridLayout *gridLayout{};
 
   QMenu *gameSettingsMenu{};
   QMenu *runMenu{};
@@ -65,6 +66,7 @@ class MainWindow : public QMainWindow
   QAction *maxBetsAct{};
   QAction *exitAct{};
   QAction *startAct{};
+  QAction *resumeAct{};
   QAction *pauseAct{};
   QAction *stopAct{};
   QAction *aboutAct{};
