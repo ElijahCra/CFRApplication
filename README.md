@@ -12,8 +12,10 @@ This program eats up memory (due to storing a massive amount of nodes in ram) so
 
 Screenshots:
 Pre-Training (Equal Probability / Fully Random Strategy)
+
 <img src="https://github.com/user-attachments/assets/5364d690-d8ec-420d-8d2e-1a5b39f4b1d1" alt="Pre-Training" width="500"/>
 
 Post-Training - Higher Probability of Betting (Green) for good hands, notice the diagonal axis having a higher probability of betting due to having a pair!
+
 <img src="https://github.com/user-attachments/assets/8a73f886-818d-499f-9906-396a53a26ddc" alt="Post-Training" width="500"/>
 ![image]()
