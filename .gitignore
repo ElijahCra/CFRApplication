@@ -1,5 +1,7 @@
 .idea
 cmake-build-*
+/cfr_nodes_db/
+/shared_cfr_nodes_db/
 /shared_cfr_nodes_db/
 /cfr_nodes_db/
 HandRanks.dat

@@ -47,6 +47,8 @@ class MyWorker : public Worker
       emit resultReady(strats);
     }
 
+    // Final flush to ensure all nodes are persisted
+    minimizer.flushStorageCache();
     qDebug() << "finished";
     //emit finished();
   }
