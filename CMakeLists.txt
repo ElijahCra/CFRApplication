@@ -8,6 +8,8 @@ set(CMAKE_AUTOUIC ON)
 
 if (WIN32)
     set(CMAKE_PREFIX_PATH "C:/Qt/6.6.2/mingw_64")
+elseif (UNIX AND NOT APPLE)
+    set(CMAKE_PREFIX_PATH "/usr")
 endif ()
 
 add_subdirectory(2PlayerCFR)

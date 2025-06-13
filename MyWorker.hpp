@@ -22,6 +22,7 @@ class MyWorker : public Worker
 
   void doWork(uint32_t epochs, uint32_t iterations)
   {
+    minimizer.printPreflopStats();
     using enum Worker::State;
     if (state == PAUSED)
       // treat as resume
