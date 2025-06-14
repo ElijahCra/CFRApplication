@@ -23,6 +23,7 @@ class MyWorker : public Worker
   void doWork(uint32_t epochs, uint32_t iterations)
   {
     minimizer.printPreflopStats();
+    minimizer.setCancelled(false);
     using enum Worker::State;
     if (state == PAUSED)
       // treat as resume
@@ -37,7 +38,23 @@ class MyWorker : public Worker
       if (isCancelled()) break;
       if (PAUSED == state) {while (PAUSED == state){QThread::msleep(200);}}
       qDebug() << i;
-      minimizer.Train(iterations);
+      
+      // Train in smaller batches to allow for more frequent cancellation checks
+      const uint32_t batchSize = std::min(iterations, 100u);
+      uint32_t remaining = iterations;
+      
+      while (remaining > 0 && !isCancelled()) {
+        uint32_t currentBatch = std::min(remaining, batchSize);
+        minimizer.setCancelled(isCancelled()); // Pass cancellation to minimizer
+        minimizer.Train(currentBatch);
+        remaining -= currentBatch;
+        
+        // Check for cancellation between batches
+        if (isCancelled()) break;
+      }
+      
+      if (isCancelled()) break;
+      
       std::array<std::vector<float>,169> strats;
       for (int row = 0; row < 13; ++row) {
         for (int col = 0; col < 13; ++col) {

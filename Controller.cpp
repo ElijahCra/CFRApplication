@@ -14,8 +14,18 @@ Controller::Controller() {
 }
 
 Controller::~Controller() {
+  // request the worker to stop
+  if (worker) {
+    worker->cancel();
+  }
+  
+  // quit the thread and wait for it to finish
   thread.quit();
-  thread.wait();
+  if (!thread.wait(5000)) { // 5 second timeout
+    qWarning() << "Thread did not finish gracefully, terminating";
+    thread.terminate();
+    thread.wait();
+  }
 }
 
 void Controller::handleResults(const std::array<std::vector<float>, 169>& strats) {
