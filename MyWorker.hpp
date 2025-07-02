@@ -9,13 +9,20 @@
 #include "Worker.hpp"
 #include "2PlayerCFR/CFR/RegretMinimizer.hpp"
 #include "2PlayerCFR/Game/GameImpl/Preflop/Game.hpp"
+#include "Storage/HybridNodeStorage.hpp"
+#include "Storage/LRUList.hpp"
+
+template<typename K, typename V> using MyMap = std::unordered_map<K, V>;
+
 class MyWorker : public Worker
 {
   Q_OBJECT
   signals:
     void resultReady(const std::array<std::vector<float>, 169>& strats);
  private:
-  CFR::RegretMinimizer<Preflop::Game> minimizer;
+
+  CFR::RegretMinimizer<Preflop::Game, CFR::HybridNodeStorage<CFR::LRUNodeCache<MyMap,LRUList>>> minimizer; //Rocksdb and lru cache
+  //CFR::RegretMinimizer<Preflop::Game> minimizer;
 
  public:
   using Worker::Worker;
