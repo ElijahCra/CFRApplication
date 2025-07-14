@@ -87,6 +87,10 @@ void MainWindow::createMenus() {
     gameTypesMenu = gameSettingsMenu->addMenu(tr("&Game Types"));
     gameTypesMenu->addAction(texasHoldemAct);
     gameTypesMenu->addAction(preFlopAct);
+    trainingStratMenu = gameSettingsMenu->addMenu(tr("&Training Strategy"));
+    trainingStratMenu->addAction(singleMemAct);
+    trainingStratMenu->addAction(singleHybridAct);
+    trainingStratMenu->addAction(multiHybridAct);
     gameSettingsMenu->addAction(iterationsAct);
     gameSettingsMenu->addAction(maxBetsAct);
     gameSettingsMenu->addSeparator();
@@ -115,6 +119,16 @@ void MainWindow::createActions() {
   preFlopAct->setShortcuts(QKeySequence::Open);
   preFlopAct->setStatusTip(tr("Switch Game Type to Preflop"));
   connect(preFlopAct, &QAction::triggered, this, &MainWindow::preFlop);
+
+
+  singleMemAct = new QAction(tr("&Use Single-Threaded in Mem cache"), this);
+  connect(singleMemAct, &QAction::triggered, this, &MainWindow::setStratSingleMem);
+
+  singleHybridAct = new QAction(tr("&Use Single-Threaded hybrid storage"), this);
+  connect(singleHybridAct, &QAction::triggered, this, &MainWindow::setStratSingleHybrid);
+
+  multiHybridAct = new QAction(tr("&Use Multi-Threaded hybrid storage"), this);
+  connect(multiHybridAct, &QAction::triggered, this, &MainWindow::setStratMultiHybrid);
 
   iterationsAct = new QAction(
       tr("&Iterations"), this);
@@ -177,6 +191,21 @@ void MainWindow::texasHoldem()
 void MainWindow::preFlop()
 {
   //connect to switch game type
+}
+
+void MainWindow::setStratSingleMem()
+{
+
+}
+
+void MainWindow::setStratSingleHybrid()
+{
+
+}
+
+void MainWindow::setStratMultiHybrid()
+{
+
 }
 
 void MainWindow::iterations(){

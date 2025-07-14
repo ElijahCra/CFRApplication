@@ -35,6 +35,9 @@ class MainWindow : public QMainWindow
  public slots:
   void texasHoldem();
   void preFlop();
+  void setStratSingleMem();
+  void setStratSingleHybrid();
+  void setStratMultiHybrid();
   void iterations();
   void maxBets();
   void start();
@@ -56,12 +59,16 @@ class MainWindow : public QMainWindow
   QGridLayout *gridLayout{};
 
   QMenu *gameSettingsMenu{};
+  QMenu *trainingStratMenu{};
   QMenu *runMenu{};
   QMenu *helpMenu{};
   QMenu *gameTypesMenu{};
 
   QAction *texasHoldemAct{};
   QAction *preFlopAct{};
+  QAction *singleMemAct{};
+  QAction *singleHybridAct{};
+  QAction *multiHybridAct{};
   QAction *iterationsAct{};
   QAction *maxBetsAct{};
   QAction *exitAct{};
