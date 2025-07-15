@@ -62,11 +62,14 @@ public slots:
     initializeMinimizer();
 
     if (m_trainingMode == TrainingMode::MultiThreadedHybrid) {
+      m_multiThreadedTrainer->setCancelled(false);
       // Use improved trainer with callback for better performance
       uint32_t totalIterations = epochs * iterations;
       
       auto progressCallback = [this](uint32_t completed) {
-        if (isCancelled()) return;
+        if (isCancelled()) {
+          m_multiThreadedTrainer->setCancelled(true);
+        }
         if (PAUSED == state) {while (PAUSED == state){QThread::msleep(200);}}
         
         std::array<std::vector<float>, 169> strats = getStrategies();
@@ -90,7 +93,7 @@ public slots:
 
     // Final flush to ensure all nodes are persisted
     flushCache();
-    qDebug() << "finished";
+    qDebug() << "finished doWork";
     state = IDLE;
   }
 
