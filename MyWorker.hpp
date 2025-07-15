@@ -29,6 +29,9 @@ class MyWorker : public Worker
   Q_OBJECT
   signals:
     void resultReady(const std::array<std::vector<float>, 169>& strats);
+    
+ public:
+    bool isTraining() const { return state == State::RUNNING; }
  private:
   TrainingMode m_trainingMode = TrainingMode::SingleThreadedHybrid;
   
@@ -44,34 +47,51 @@ class MyWorker : public Worker
   
   void setTrainingMode(TrainingMode mode);
   TrainingMode getTrainingMode() const { return m_trainingMode; }
+  
+public slots:
+  void setTrainingModeSlot(TrainingMode mode);
 
   void doWork(uint32_t epochs, uint32_t iterations)
   {
     using enum Worker::State;
-    if (state == PAUSED)
-      // treat as resume
-      state = RUNNING;
+    if (state == RUNNING){return;}
     state = RUNNING;
     qDebug() << "started";
 
     // Initialize the appropriate minimizer if not already done
     initializeMinimizer();
 
-    // This loop simulates the actual work
-    for (auto i = 0u; i < epochs; ++i) {
-      if (isCancelled()) break;
-      if (PAUSED == state) {while (PAUSED == state){QThread::msleep(200);}}
-      qDebug() << i;
+    if (m_trainingMode == TrainingMode::MultiThreadedHybrid) {
+      // Use improved trainer with callback for better performance
+      uint32_t totalIterations = epochs * iterations;
       
-      trainIteration(iterations);
+      auto progressCallback = [this](uint32_t completed) {
+        if (isCancelled()) return;
+        if (PAUSED == state) {while (PAUSED == state){QThread::msleep(200);}}
+        
+        std::array<std::vector<float>, 169> strats = getStrategies();
+        emit resultReady(strats);
+      };
       
-      std::array<std::vector<float>, 169> strats = getStrategies();
-      emit resultReady(strats);
+      m_multiThreadedTrainer->TrainWithCallback(totalIterations, progressCallback);
+    } else {
+      // Use original epoch-based approach for other modes
+      for (auto i = 0u; i < epochs; ++i) {
+        if (isCancelled()) break;
+        if (PAUSED == state) {while (PAUSED == state){QThread::msleep(200);}}
+        qDebug() << i;
+        
+        trainIteration(iterations);
+        
+        std::array<std::vector<float>, 169> strats = getStrategies();
+        emit resultReady(strats);
+      }
     }
 
     // Final flush to ensure all nodes are persisted
     flushCache();
     qDebug() << "finished";
+    state = IDLE;
   }
 
 private:

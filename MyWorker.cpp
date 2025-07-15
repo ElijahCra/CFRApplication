@@ -14,6 +14,10 @@ void MyWorker::setTrainingMode(TrainingMode mode) {
     m_multiThreadedTrainer.reset();
 }
 
+void MyWorker::setTrainingModeSlot(TrainingMode mode) {
+    setTrainingMode(mode);
+}
+
 void MyWorker::initializeMinimizer() {
     switch (m_trainingMode) {
         case TrainingMode::SingleThreadedInMem:

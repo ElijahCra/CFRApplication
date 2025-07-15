@@ -27,6 +27,7 @@ class Controller final : public QObject
  signals:
   void operate(uint32_t epochs, uint32_t iterations);
   void resultsReadyForUI(const std::array<std::vector<float>, 169>&);
+  void setTrainingModeSignal(TrainingMode mode);
 };
 
 #endif //CFRAPP_CONTROLLER_HPP_
