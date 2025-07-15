@@ -5,6 +5,7 @@
 #include <QFunctionPointer>
 #include "customsquare.hpp"
 #include "Controller.hpp"
+#include "MyWorker.hpp"
 #include <QGridLayout>
 #include <QToolButton>
 #include <QPushButton>

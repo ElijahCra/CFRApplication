@@ -34,3 +34,7 @@ void Controller::handlePause() const {
 void Controller::handleResume() const {
   worker->resume();
 }
+
+void Controller::setTrainingMode(TrainingMode mode) {
+  worker->setTrainingMode(mode);
+}

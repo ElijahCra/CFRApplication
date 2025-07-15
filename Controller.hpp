@@ -23,6 +23,7 @@ class Controller final : public QObject
   void handlePause() const;
   void handleCancel() const;
   void handleResume() const;
+  void setTrainingMode(TrainingMode mode);
  signals:
   void operate(uint32_t epochs, uint32_t iterations);
   void resultsReadyForUI(const std::array<std::vector<float>, 169>&);

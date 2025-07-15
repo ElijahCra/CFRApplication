@@ -27,7 +27,7 @@ add_executable(CFRApp
         Worker.hpp
         Controller.cpp
         Controller.hpp
-        MyWorker.hpp)
+        MyWorker.cpp)
 target_link_libraries(CFRApp
         Qt::Core
         Qt::Gui

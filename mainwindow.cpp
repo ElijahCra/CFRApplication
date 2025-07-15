@@ -195,17 +195,20 @@ void MainWindow::preFlop()
 
 void MainWindow::setStratSingleMem()
 {
-
+  controller->setTrainingMode(TrainingMode::SingleThreadedInMem);
+  statusBar()->showMessage(tr("Training mode set to: Single-Threaded In-Memory"));
 }
 
 void MainWindow::setStratSingleHybrid()
 {
-
+  controller->setTrainingMode(TrainingMode::SingleThreadedHybrid);
+  statusBar()->showMessage(tr("Training mode set to: Single-Threaded Hybrid Storage"));
 }
 
 void MainWindow::setStratMultiHybrid()
 {
-
+  controller->setTrainingMode(TrainingMode::MultiThreadedHybrid);
+  statusBar()->showMessage(tr("Training mode set to: Multi-Threaded Hybrid Storage"));
 }
 
 void MainWindow::iterations(){
