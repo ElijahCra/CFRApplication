@@ -8,47 +8,100 @@
 #include <QtCore>
 #include "Worker.hpp"
 #include "2PlayerCFR/CFR/RegretMinimizer.hpp"
+#include "2PlayerCFR/CFR/MultiThreadedTrainer.hpp"
 #include "2PlayerCFR/Game/GameImpl/Preflop/Game.hpp"
+#include "Storage/HybridNodeStorage.hpp"
+#include "Storage/MapNodeStorage.hpp"
+#include "Storage/ShardedLRUCache.hpp"
+#include "Storage/LRUList.hpp"
+#include <memory>
+
+template<typename K, typename V> using MyMap = std::unordered_map<K, V>;
+
+enum class TrainingMode {
+    SingleThreadedInMem,
+    SingleThreadedHybrid,
+    MultiThreadedHybrid
+};
+
 class MyWorker : public Worker
 {
   Q_OBJECT
   signals:
     void resultReady(const std::array<std::vector<float>, 169>& strats);
+    
+ public:
+    bool isTraining() const { return state == State::RUNNING; }
  private:
-  CFR::RegretMinimizer<Preflop::Game> minimizer;
+  TrainingMode m_trainingMode = TrainingMode::SingleThreadedHybrid;
+  
+  // Single-threaded minimizers
+  std::unique_ptr<CFR::RegretMinimizer<Preflop::Game, CFR::MapNodeStorage>> m_singleMemMinimizer;
+  std::unique_ptr<CFR::RegretMinimizer<Preflop::Game, CFR::HybridNodeStorage<CFR::LRUNodeCache<MyMap,LRUList>>>> m_singleHybridMinimizer;
+  
+  // Multi-threaded trainer
+  std::unique_ptr<CFR::MultiThreadedTrainer<Preflop::Game, CFR::HybridNodeStorage<CFR::ShardedLRUCache<MyMap,LRUList>>>> m_multiThreadedTrainer;
 
  public:
   using Worker::Worker;
+  
+  void setTrainingMode(TrainingMode mode);
+  TrainingMode getTrainingMode() const { return m_trainingMode; }
+  
+public slots:
+  void setTrainingModeSlot(TrainingMode mode);
 
   void doWork(uint32_t epochs, uint32_t iterations)
   {
     using enum Worker::State;
-    if (state == PAUSED)
-      // treat as resume
-      state = RUNNING;
+    if (state == RUNNING){return;}
     state = RUNNING;
     qDebug() << "started";
-    //emit started();
 
-    // This loop simulates the actual work
-    for (auto i = 0u; i <epochs;  ++i) {
-      //QThread::msleep(100);
-      if (isCancelled()) break;
-      if (PAUSED == state) {while (PAUSED == state){QThread::msleep(200);}}
-      qDebug() << i;
-      minimizer.Train(iterations);
-      std::array<std::vector<float>,169> strats;
-      for (int row = 0; row < 13; ++row) {
-        for (int col = 0; col < 13; ++col) {
-          strats[row*13+col] = minimizer.getNodeInformation(std::format("{}",row*13+col))[2];
+    // Initialize the appropriate minimizer if not already done
+    initializeMinimizer();
+
+    if (m_trainingMode == TrainingMode::MultiThreadedHybrid) {
+      m_multiThreadedTrainer->setCancelled(false);
+      // Use improved trainer with callback for better performance
+      uint32_t totalIterations = epochs * iterations;
+      
+      auto progressCallback = [this](uint32_t completed) {
+        if (isCancelled()) {
+          m_multiThreadedTrainer->setCancelled(true);
         }
+        if (PAUSED == state) {while (PAUSED == state){QThread::msleep(200);}}
+        
+        std::array<std::vector<float>, 169> strats = getStrategies();
+        emit resultReady(strats);
+      };
+      
+      m_multiThreadedTrainer->TrainWithCallback(totalIterations, progressCallback);
+    } else {
+      // Use original epoch-based approach for other modes
+      for (auto i = 0u; i < epochs; ++i) {
+        if (isCancelled()) break;
+        if (PAUSED == state) {while (PAUSED == state){QThread::msleep(200);}}
+        qDebug() << i;
+        
+        trainIteration(iterations);
+        
+        std::array<std::vector<float>, 169> strats = getStrategies();
+        emit resultReady(strats);
       }
-      emit resultReady(strats);
     }
 
-    qDebug() << "finished";
-    //emit finished();
+    // Final flush to ensure all nodes are persisted
+    flushCache();
+    qDebug() << "finished doWork";
+    state = IDLE;
   }
+
+private:
+  void initializeMinimizer();
+  void trainIteration(uint32_t iterations);
+  std::array<std::vector<float>, 169> getStrategies();
+  void flushCache();
 };
 
 #endif //CFRAPP_MYWORKER_HPP_

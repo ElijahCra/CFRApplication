@@ -8,6 +8,8 @@ set(CMAKE_AUTOUIC ON)
 
 if (WIN32)
     set(CMAKE_PREFIX_PATH "C:/Qt/6.6.2/mingw_64")
+elseif (UNIX AND NOT APPLE)
+    set(CMAKE_PREFIX_PATH "/usr")
 endif ()
 
 add_subdirectory(2PlayerCFR)
@@ -25,7 +27,7 @@ add_executable(CFRApp
         Worker.hpp
         Controller.cpp
         Controller.hpp
-        MyWorker.hpp)
+        MyWorker.cpp)
 target_link_libraries(CFRApp
         Qt::Core
         Qt::Gui

@@ -61,7 +61,7 @@ class Worker : public QObject
 
  protected:
 
-  enum class State:int { IDLE=0, RUNNING, PAUSED };
+  enum class State:int { IDLE=0, RUNNING, PAUSED};
   State state = State::IDLE;
 
   [[nodiscard]] bool isCancelled() const {

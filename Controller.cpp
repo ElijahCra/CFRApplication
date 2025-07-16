@@ -10,6 +10,7 @@ Controller::Controller() {
   connect(worker, &QObject::destroyed, &thread, &QThread::quit);
   connect(this, &Controller::operate, worker, &MyWorker::doWork);
   connect(worker, &MyWorker::resultReady, this, &Controller::handleResults);
+  connect(this, &Controller::setTrainingModeSignal, worker, &MyWorker::setTrainingModeSlot);
   thread.start();
 }
 
@@ -33,4 +34,8 @@ void Controller::handlePause() const {
 
 void Controller::handleResume() const {
   worker->resume();
+}
+
+void Controller::setTrainingMode(TrainingMode mode) {
+  emit setTrainingModeSignal(mode);
 }
